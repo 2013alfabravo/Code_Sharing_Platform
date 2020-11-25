@@ -71,28 +71,20 @@ public class CodeController {
         }
     }
 
-    @Transactional
     @GetMapping(path = "code/latest")
     public String getRecentSnippetsHtml(Model model) {
         List<Code> latest = snippetRepository.findTenRecentSnippets();
-        updateSnippetRestrictions(latest);
         model.addAttribute("snippets", latest);
         return "latest";
     }
 
-    private void updateSnippetRestrictions(List<Code> snippets) {
-        for (Code snippet : snippets) {
-            if (snippet.isExpiringByTime()) {
-                snippet.updateTime();
-            }
-            if (snippet.isExpiringByViews()) {
-                snippet.updateViews();
-                snippetRepository.updateViewsByUuid(snippet.getViews(), snippet.getUuid());
-            }
-        }
-    }
-
     private void updateSnippetRestrictions(Code snippet) {
-        updateSnippetRestrictions(List.of(snippet));
+        if (snippet.isExpiringByTime()) {
+            snippet.updateTime();
+        }
+        if (snippet.isExpiringByViews()) {
+            snippet.updateViews();
+            snippetRepository.updateViewsByUuid(snippet.getViews(), snippet.getUuid());
+        }
     }
 }
