@@ -35,11 +35,9 @@ public class CodeController {
         }
     }
 
-    @Transactional
     @GetMapping(path = "api/code/latest")
     public ResponseEntity<List<Code>> getRecentSnippetJson() {
         List<Code> latest = snippetRepository.findTenRecentSnippets();
-        updateSnippetRestrictions(latest);
         return ResponseEntity.ok().body(latest);
     }
 
